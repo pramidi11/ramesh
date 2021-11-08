@@ -3,14 +3,26 @@
  */
 package logbook;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.text.ParseException;
+
 public class App {
-    public String getGreeting() throws Exception {
-        Runner runner = new Runner();
-        runner.logBookEntries();
+    Runner runner = new Runner();
+
+    public String scheduledEntry() throws Exception {
+
+        runner.logBookEntries(true);
+        return "success";
+    }
+
+    public String onDemandEntry() throws IOException, URISyntaxException, ParseException, NoSuchFieldException, IllegalAccessException {
+        runner.onDemandTaskLogEntries("onepm", "2021-11-7");
         return "success";
     }
 
     public static void main(String[] args) throws Exception {
-        System.out.println(new App().getGreeting());
+        System.out.println(new App().scheduledEntry());
+//        System.out.println(new App().onDemandEntry());
     }
 }
