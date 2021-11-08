@@ -1,15 +1,15 @@
 package logbook;
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import java.time.ZonedDateTime;
 
-import java.time.Instant;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonPropertyOrder({ "taskId", "enteredTime", "addProperty1", "addProperty2", "addProperty3" })
 public class Task {
 
     public String taskId ="";
     public String performedBy="";
-    public String enteredDate= Instant.now().toString().split("T")[0];
+    public String enteredDate= ZonedDateTime.now().toString().split("T")[0];
     public String enteredTime="";
     public String addProperty1="";
     public String addProperty2="";
