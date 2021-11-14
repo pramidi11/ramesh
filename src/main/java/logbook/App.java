@@ -17,12 +17,12 @@ public class App {
     }
 
     public String onDemandEntry() throws IOException, URISyntaxException, ParseException, NoSuchFieldException, IllegalAccessException {
-        runner.onDemandTaskLogEntries("onepm", "2021-11-7");
+        runner.onDemandTaskLogEntries("onepm", "2021-11-10");
         return "success";
     }
 
     public static void main(String[] args) throws Exception {
-        System.out.println(new App().scheduledEntry());
-//        System.out.println(new App().onDemandEntry());
+//        System.out.println(new App().scheduledEntry());
+        System.out.println(new App().onDemandEntry());
     }
 }
