@@ -44,8 +44,9 @@ public class Runner {
             .build();
             Response response = client.newCall(request).execute();
         assert response.body() != null;
-        System.out.println(response.body());
-        return objectMapper.readValue(response.body().string(), new TypeReference<List<TaskHistory>>() {});
+        String out = response.body().string();
+        System.out.println(out);
+        return objectMapper.readValue(out, new TypeReference<List<TaskHistory>>() {});
     }
 
      public boolean submitTask(String payload, boolean submit) throws IOException {
@@ -74,12 +75,11 @@ public class Runner {
             List<Worker> workers = readCsv.readWorkers("employees.csv");
             List<TaskHistory> taskHistories = getHistory(historyDate);
             System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(taskHistories));
-//            taskList.forEach(task -> {
-//
-//            });
-
+            taskList.forEach(task -> {
+                task.setEnteredDate(historyDate);
+            });
             Calendar c = Calendar.getInstance();
-            c.setTime(new SimpleDateFormat("dd/M/yyyy").parse(historyDate));
+            c.setTime(new SimpleDateFormat("yyyy-MM-dd").parse(historyDate));
             util(file, taskList, workers, c);
             webDriver.quit();
         } catch (Exception e) {
@@ -99,7 +99,7 @@ public class Runner {
         });
         taskList.forEach(task -> {
             try {
-                task.setSuccess(submitTask(new ObjectMapper().writeValueAsString(task), true));
+                task.setSuccess(submitTask(new ObjectMapper().writeValueAsString(task), false));
                 System.out.format("%1s%9s%6s%6s%6s \n--------------------------------------------------\n", task.getTaskId(), task.getPerformedBy(), task.getEnteredDate(), task.getEnteredTime(), task.isSuccess());
             } catch (IOException e) {
                 e.printStackTrace();

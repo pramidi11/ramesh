@@ -10,19 +10,23 @@ import java.text.ParseException;
 public class App {
     Runner runner = new Runner();
 
-    public String scheduledEntry() throws Exception {
+    public String scheduledEntry(boolean fullDay) throws Exception {
 
-        runner.logBookEntries(true);
+        runner.logBookEntries(fullDay);
         return "success";
     }
 
-    public String onDemandEntry() throws IOException, URISyntaxException, ParseException, NoSuchFieldException, IllegalAccessException {
-        runner.onDemandTaskLogEntries("onepm", "2021-11-10");
+    public String onDemandEntry(boolean fullDay) throws Exception {
+        if(fullDay) {
+            scheduledEntry(fullDay);
+        } else {
+            runner.onDemandTaskLogEntries("onepm", "2021-11-15");
+        }
         return "success";
     }
 
     public static void main(String[] args) throws Exception {
-//        System.out.println(new App().scheduledEntry());
-        System.out.println(new App().onDemandEntry());
+//        System.out.println(new App().scheduledEntry(false));
+        System.out.println(new App().onDemandEntry(false));
     }
 }

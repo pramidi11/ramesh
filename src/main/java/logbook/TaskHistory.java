@@ -8,26 +8,29 @@ public class TaskHistory {
         private String time;
 
         @JsonProperty("ambient Cabinet Temps")
-        private String ambientCabinetTemp;
+        private KeyValue[][] ambientCabinetTemp;
 
         @JsonProperty("chest Freezer Temps")
-        private String chestFreezerTemp;
+        private KeyValue[][] chestFreezerTemp;
 
         @JsonProperty("clean Coffee Machine Station")
-        private String cleanCoffeeMachineStation;
+        private KeyValue[][] cleanCoffeeMachineStation;
 
         @JsonProperty("coffee Machine Counter")
-        private String coffeeMachineCounter;
+        private KeyValue[][] coffeeMachineCounter;
 
         @JsonProperty("hot cabinet temps")
-        private String hotCabinetTemp;
+        private KeyValue[][] hotCabinetTemp;
 
         @JsonProperty("sandwich unit Temps")
-        private String sandwichUnitTemp;
+        private KeyValue[][] sandwichUnitTemp;
 
         @JsonProperty("toilet Cleaning")
-        private String toiletCleaning;
+        private KeyValue[][] toiletCleaning;
 
         @JsonProperty("walk-in Temps")
-        private String walkInTemp;
+        private KeyValue[][] walkInTemp;
+
+        @JsonProperty("under Bench Freezer/ Refrigerator Temps")
+        private KeyValue[][] underBenchFreezer;
 }
