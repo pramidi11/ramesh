@@ -23,7 +23,6 @@ public class Task {
         String[] ranges = temp.split(";");
         Random r = new Random();
         double random = (r.nextInt(21)-10) / 10.0;
-
         int number = r.nextInt(Integer.parseInt(ranges[1]) - Integer.parseInt(ranges[0])) + Integer.parseInt(ranges[0]);
         System.out.println(ranges[0] + " " + ranges[1] + " " + (random+number) );
         return String.valueOf(random + (double) number);

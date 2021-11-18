@@ -3,10 +3,6 @@
  */
 package logbook;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.text.ParseException;
-
 public class App {
     Runner runner = new Runner();
 
@@ -26,7 +22,7 @@ public class App {
     }
 
     public static void main(String[] args) throws Exception {
-//        System.out.println(new App().scheduledEntry(false));
-        System.out.println(new App().onDemandEntry(false));
+//        System.out.println(new App().scheduledEntry(true));
+        System.out.println(new App().onDemandEntry(true));
     }
 }

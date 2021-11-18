@@ -33,4 +33,5 @@ public class TaskHistory {
 
         @JsonProperty("under Bench Freezer/ Refrigerator Temps")
         private KeyValue[][] underBenchFreezer;
+
 }
