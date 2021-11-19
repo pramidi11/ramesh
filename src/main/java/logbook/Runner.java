@@ -25,7 +25,7 @@ public class Runner {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public void setup() {
-        System.setProperty("webdriver.chrome.driver", System.getProperty("user.dir") + "/src/test/resources/chromedriver");
+        System.setProperty("webdriver.chrome.driver", System.getProperty("user.dir") + "/src/main/resources/chromedriver");
         webDriver = new ChromeDriver();
         webDriver.get("http://logbook.pieface.com.au/");
         webDriver.findElement(By.xpath("//*[@id=\"navbarCollapse\"]/div[2]/a")).click();
@@ -99,7 +99,7 @@ public class Runner {
         });
         taskList.forEach(task -> {
             try {
-                task.setSuccess(submitTask(new ObjectMapper().writeValueAsString(task), true));
+                task.setSuccess(submitTask(new ObjectMapper().writeValueAsString(task), false));
                 System.out.format("%1s%9s%6s%6s%6s \n--------------------------------------------------\n", task.getTaskId(), task.getPerformedBy(), task.getEnteredDate(), task.getEnteredTime(), task.isSuccess());
             } catch (IOException e) {
                 e.printStackTrace();
