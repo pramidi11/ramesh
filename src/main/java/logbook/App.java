@@ -4,25 +4,10 @@
 package logbook;
 
 public class App {
-    Runner runner = new Runner();
-
-    public String scheduledEntry(boolean fullDay) throws Exception {
-
-        runner.logBookEntries(fullDay);
-        return "success";
-    }
-
-    public String onDemandEntry(boolean fullDay) throws Exception {
-        if(fullDay) {
-            scheduledEntry(fullDay);
-        } else {
-            runner.onDemandTaskLogEntries("onepm", "2021-11-15");
-        }
-        return "success";
-    }
+    private static final Runner runner = new Runner();
 
     public static void main(String[] args) throws Exception {
-//        System.out.println(new App().scheduledEntry(true));
-        System.out.println(new App().onDemandEntry(true));
+        runner.logBookEntries(true, null); // to run today
+        runner.onDemandTaskLogEntries(true, "2021-11-16"); // run specific date
     }
 }

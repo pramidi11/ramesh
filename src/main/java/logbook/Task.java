@@ -1,6 +1,9 @@
 package logbook;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -56,7 +59,10 @@ public class Task {
     }
 
     public void setEnteredDate(String enteredDate) {
-        this.enteredDate = enteredDate;
+        String pattern = "yyyy-MM-dd";
+        DateTimeFormatter Parser = DateTimeFormatter.ofPattern(pattern).ISO_DATE;
+        ZoneId timeZone = ZoneId.systemDefault();
+        this.enteredDate = LocalDateTime.parse(enteredDate,Parser);
     }
 
     public String getEnteredTime() {
