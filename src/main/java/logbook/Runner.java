@@ -9,6 +9,7 @@ import okhttp3.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -28,8 +29,12 @@ public class Runner {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public void setup() {
+        ChromeOptions chromeOptions = new ChromeOptions();
+        chromeOptions.addArguments("--headless");
+        chromeOptions.addArguments("--no-sandbox");
+        chromeOptions.addArguments("----disable-dev-shm-usage");
         System.setProperty("webdriver.chrome.driver", System.getProperty("user.dir") + "/src/main/resources/chromedriver");
-        webDriver = new ChromeDriver();
+        webDriver = new ChromeDriver(chromeOptions);
         webDriver.get("http://logbook.pieface.com.au/");
         webDriver.findElement(By.xpath("//*[@id=\"navbarCollapse\"]/div[2]/a")).click();
         webDriver.findElement(By.id("Input_ExternalId")).sendKeys("3389");
@@ -168,9 +173,9 @@ public class Runner {
     }
 
     private void checkIfFilled(TaskHistory taskHistory) {
-        Arrays.stream(taskHistory.getClass().getFields()).filter(field -> !field.getName().equals("time")).forEach(field -> {
+        Arrays.stream(taskHistory.getClass().getFields()).forEach(field -> {
             try {
-                if(field.get(taskHistory) != null) {
+                if(field.get(taskHistory) != null && !field.getName().equals("time")) {
                     System.out.println(field.getName());
                     webDriver.quit();
                     throw new Error("Tasks already filled for date");

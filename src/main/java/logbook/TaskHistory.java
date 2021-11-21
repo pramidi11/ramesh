@@ -5,34 +5,34 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class TaskHistory {
 
         @JsonProperty("time")
-        private String time;
+        public String time;
 
         @JsonProperty("ambient Cabinet Temps")
-        private KeyValue[][] ambientCabinetTemp;
+        public KeyValue[][] ambientCabinetTemp;
 
         @JsonProperty("chest Freezer Temps")
-        private KeyValue[][] chestFreezerTemp;
+        public KeyValue[][] chestFreezerTemp;
 
         @JsonProperty("clean Coffee Machine Station")
-        private KeyValue[][] cleanCoffeeMachineStation;
+        public KeyValue[][] cleanCoffeeMachineStation;
 
         @JsonProperty("coffee Machine Counter")
-        private KeyValue[][] coffeeMachineCounter;
+        public KeyValue[][] coffeeMachineCounter;
 
         @JsonProperty("hot cabinet temps")
-        private KeyValue[][] hotCabinetTemp;
+        public KeyValue[][] hotCabinetTemp;
 
         @JsonProperty("sandwich unit Temps")
-        private KeyValue[][] sandwichUnitTemp;
+        public KeyValue[][] sandwichUnitTemp;
 
         @JsonProperty("toilet Cleaning")
-        private KeyValue[][] toiletCleaning;
+        public KeyValue[][] toiletCleaning;
 
         @JsonProperty("walk-in Temps")
-        private KeyValue[][] walkInTemp;
+        public KeyValue[][] walkInTemp;
 
         @JsonProperty("under Bench Freezer/ Refrigerator Temps")
-        private KeyValue[][] underBenchFreezer;
+        public KeyValue[][] underBenchFreezer;
 
         public String getTime() {
                 return time;
