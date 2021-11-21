@@ -16,8 +16,11 @@ import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class Runner {
 
@@ -25,7 +28,7 @@ public class Runner {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public void setup() {
-        System.setProperty("webdriver.chrome.driver", System.getProperty("user.dir") + "/src/test/resources/chromedriver");
+        System.setProperty("webdriver.chrome.driver", System.getProperty("user.dir") + "/src/main/resources/chromedriver");
         webDriver = new ChromeDriver();
         webDriver.get("http://logbook.pieface.com.au/");
         webDriver.findElement(By.xpath("//*[@id=\"navbarCollapse\"]/div[2]/a")).click();
@@ -80,7 +83,7 @@ public class Runner {
             });
             Calendar c = Calendar.getInstance();
             c.setTime(new SimpleDateFormat("yyyy-MM-dd").parse(historyDate));
-            util(file, taskList, workers, c);
+            util(file, taskList, workers, c, historyDate);
             webDriver.quit();
         } catch (Exception e) {
             webDriver.quit();
@@ -88,18 +91,28 @@ public class Runner {
         }
     }
 
-    private void util(String file, List<Task> taskList, List<Worker> workers, Calendar c) throws NoSuchFieldException, IllegalAccessException {
-        int day = c.get(Calendar.DAY_OF_WEEK);
+    private void util(String file, List<Task> taskList, List<Worker> workers, Calendar now, String customDate) throws NoSuchFieldException, IllegalAccessException, ParseException {
+        int day;
+        if (customDate == null) {
+           day = now.get(Calendar.DAY_OF_WEEK);
+        } else {
+            Calendar cal = Calendar.getInstance();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+            cal.setTime(sdf.parse(customDate));
+            day = cal.get(Calendar.DAY_OF_WEEK);
+        }
         Worker entry = workers.get(day - 1);
         Field f = entry.getClass().getField(file);
         String value = (String) f.get(entry);
         System.out.println("logging for working day" + day + "- for " + value + "with file " + file);
         taskList.forEach(task -> {
             task.setPerformedBy(value);
+            if (customDate != null)
+                task.setEnteredDate(customDate);
         });
         taskList.forEach(task -> {
             try {
-                task.setSuccess(submitTask(new ObjectMapper().writeValueAsString(task), true));
+                task.setSuccess(submitTask(new ObjectMapper().writeValueAsString(task), false));
                 System.out.format("%1s%9s%6s%6s%6s \n--------------------------------------------------\n", task.getTaskId(), task.getPerformedBy(), task.getEnteredDate(), task.getEnteredTime(), task.isSuccess());
             } catch (IOException e) {
                 e.printStackTrace();
@@ -107,14 +120,14 @@ public class Runner {
         });
     }
 
-    public void logBookEntries(boolean fullDay) throws Exception {
+    public void logBookEntries(boolean fullDay, String customDate) throws Exception {
         try {
             ReadCsv readCsv = new ReadCsv();
             List<Worker> workers = readCsv.readWorkers("employees.csv");
             setup();
-            Calendar now = Calendar.getInstance();
-            int hour = now.get(Calendar.HOUR_OF_DAY);
             if(!fullDay) {
+                Calendar now = Calendar.getInstance();
+                int hour = now.get(Calendar.HOUR_OF_DAY);
                 String file;
                 if ((hour > 9) && (hour < 12)) {
                     file = "nineam";
@@ -127,7 +140,7 @@ public class Runner {
                 }
                 System.out.println("running file " + file);
                 List<Task> taskList = readCsv.readTasks(file + ".csv");
-                util(file, taskList, workers, now);
+                util(file, taskList, workers, now, null);
             } else {
                 ArrayList<String> list = new ArrayList<>();
                 list.add("nineam");
@@ -137,8 +150,12 @@ public class Runner {
                     System.out.println("running file " + entryFile);
                     try {
                         List<Task> taskList = readCsv.readTasks(entryFile + ".csv");
-                        util(entryFile, taskList, workers, now);
-                    } catch (IOException | IllegalAccessException | URISyntaxException | NoSuchFieldException e) {
+                        if(customDate != null) {
+                            List<TaskHistory> taskHistories = getHistory(customDate);
+                            taskHistories.forEach(this::checkIfFilled);
+                        }
+                        util(entryFile, taskList, workers, null, customDate);
+                    } catch (IOException | IllegalAccessException | URISyntaxException | NoSuchFieldException | ParseException e) {
                         e.printStackTrace();
                     }
                 });
@@ -148,6 +165,20 @@ public class Runner {
             webDriver.quit();
             throw e;
         }
+    }
+
+    private void checkIfFilled(TaskHistory taskHistory) {
+        Arrays.stream(taskHistory.getClass().getFields()).filter(field -> !field.getName().equals("time")).forEach(field -> {
+            try {
+                if(field.get(taskHistory) != null) {
+                    System.out.println(field.getName());
+                    webDriver.quit();
+                    throw new Error("Tasks already filled for date");
+                }
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
 }
