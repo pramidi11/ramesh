@@ -12,7 +12,7 @@ public class App {
 //        runner.logBookEntries(false, null);
 
         System.out.println("---*********-----FILLING FULL DAY ENTRY CUSTOM DATE---*****------");
-        runner.logBookEntries(true, "2021-11-21");
+        runner.logBookEntries(true, "2021-11-12");
 
 //        System.out.println("---*********-----FILLING TIMED ENTRY CUSTOM DATE---*****------");
 //        runner.onDemandTaskLogEntries("onepm", "2021-11-16");

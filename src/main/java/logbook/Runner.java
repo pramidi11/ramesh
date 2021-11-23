@@ -117,7 +117,7 @@ public class Runner {
         });
         taskList.forEach(task -> {
             try {
-                task.setSuccess(submitTask(new ObjectMapper().writeValueAsString(task), false));
+                task.setSuccess(submitTask(new ObjectMapper().writeValueAsString(task), true));
                 System.out.format("%1s%9s%6s%6s%6s \n--------------------------------------------------\n", task.getTaskId(), task.getPerformedBy(), task.getEnteredDate(), task.getEnteredTime(), task.isSuccess());
             } catch (IOException e) {
                 e.printStackTrace();
