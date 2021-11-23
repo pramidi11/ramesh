@@ -90,6 +90,9 @@ public class Task {
     }
 
     public String getAddProperty3() {
+        if(addProperty3.contains(";")) {
+            return getRandom(addProperty3);
+        }
         return addProperty3;
     }
 
