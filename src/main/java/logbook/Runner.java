@@ -147,6 +147,10 @@ public class Runner {
                 List<Task> taskList = readCsv.readTasks(file + ".csv");
                 util(file, taskList, workers, now, null);
             } else {
+                if(customDate != null) {
+                    List<TaskHistory> taskHistories = getHistory(customDate);
+                    taskHistories.forEach(this::checkIfFilled);
+                }
                 ArrayList<String> list = new ArrayList<>();
                 list.add("nineam");
                 list.add("onepm");
@@ -155,10 +159,6 @@ public class Runner {
                     System.out.println("running file " + entryFile);
                     try {
                         List<Task> taskList = readCsv.readTasks(entryFile + ".csv");
-                        if(customDate != null) {
-                            List<TaskHistory> taskHistories = getHistory(customDate);
-                            taskHistories.forEach(this::checkIfFilled);
-                        }
                         util(entryFile, taskList, workers, null, customDate);
                     } catch (IOException | IllegalAccessException | URISyntaxException | NoSuchFieldException | ParseException e) {
                         e.printStackTrace();
