@@ -7,6 +7,5 @@ taskId,enteredTime,addProperty1,addProperty2,addProperty3
 24,18:00,-20;-17,,2;5
 25,18:00,-25;-17,-25;-17,
 26,18:00,0;5,,
-27,17:00,Yes,,
-27,21:00,Yes,,
+27,18:00,2;5/2;5,,
 28,20:00,,Cleaned,
