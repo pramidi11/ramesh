@@ -16,19 +16,18 @@ import java.lang.reflect.Field;
 import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 public class Runner {
 
     private WebDriver webDriver;
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final Config configs = new Config();
+    private Config config = null;
 
-    public void setup() {
+
+    public void setup() throws IOException {
+        config = configs.getConfig();
         ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.addArguments("--headless");
         chromeOptions.addArguments("--no-sandbox");
@@ -37,8 +36,8 @@ public class Runner {
         webDriver = new ChromeDriver(chromeOptions);
         webDriver.get("http://logbook.pieface.com.au/");
         webDriver.findElement(By.xpath("//*[@id=\"navbarCollapse\"]/div[2]/a")).click();
-        webDriver.findElement(By.id("Input_ExternalId")).sendKeys("3389");
-        webDriver.findElement(By.id("Input_Password")).sendKeys("3389");
+        webDriver.findElement(By.id("Input_ExternalId")).sendKeys(config.getUsername());
+        webDriver.findElement(By.id("Input_Password")).sendKeys(config.getPassword());
         webDriver.findElement(By.xpath("//*[@id=\"account\"]/div[5]/button")).click();
     }
 
@@ -117,7 +116,7 @@ public class Runner {
         });
         taskList.forEach(task -> {
             try {
-                task.setSuccess(submitTask(new ObjectMapper().writeValueAsString(task), true));
+                task.setSuccess(submitTask(new ObjectMapper().writeValueAsString(task), config.isSubmit()));
                 System.out.format("%1s%9s%6s%6s%6s \n--------------------------------------------------\n", task.getTaskId(), task.getPerformedBy(), task.getEnteredDate(), task.getEnteredTime(), task.isSuccess());
             } catch (IOException e) {
                 e.printStackTrace();

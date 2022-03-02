@@ -3,18 +3,22 @@
  */
 package logbook;
 
+import java.util.Properties;
+
 public class App {
-    private static Runner runner = new Runner();
+    private static final Runner runner = new Runner();
+    private static final Config config = new Config();
 
 
     public static void main(String[] args) throws Exception {
+        Config configs = config.getConfig();
 //        System.out.println("---*********-----FILLING TIMED ENTRY TODAY---*****------");
 //        runner.logBookEntries(false, null);
 
         System.out.println("---*********-----FILLING FULL DAY ENTRY CUSTOM DATE---*****------");
-        runner.logBookEntries(true, "2021-11-12");
+        runner.logBookEntries(true, configs.getBatchDate());
 
 //        System.out.println("---*********-----FILLING TIMED ENTRY CUSTOM DATE---*****------");
-//        runner.onDemandTaskLogEntries("onepm", "2021-11-16");
+//        runner.onDemandTaskLogEntries("onepm", "2021-11-12");
     }
 }

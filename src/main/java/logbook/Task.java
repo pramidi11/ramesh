@@ -1,8 +1,10 @@
 package logbook;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
@@ -19,12 +21,11 @@ public class Task {
     public boolean success=false;
 
     public String getRandom(String temp) {
-
         String[] ranges = temp.split(";");
         Random r = new Random();
-        double random = (r.nextInt(21)-10) / 10.0;
+        double random = (r.nextInt(9)) / 10.0;
         int number = r.nextInt(Integer.parseInt(ranges[1]) - Integer.parseInt(ranges[0])) + Integer.parseInt(ranges[0]);
-        System.out.println(ranges[0] + " " + ranges[1] + " " + (random+number) );
+        System.out.println(ranges[0] + "AND " + ranges[1] + "  = " + (random+number));
         return String.valueOf(random + (double) number);
     }
 
@@ -68,7 +69,9 @@ public class Task {
     }
 
     public String getAddProperty1() {
-        if(addProperty1.contains(";")) {
+        if(addProperty1.contains("/")) {
+            return getMilkTemp(addProperty1);
+        } else if (addProperty1.contains(";")) {
             return getRandom(addProperty1);
         }
         return addProperty1;
@@ -79,7 +82,9 @@ public class Task {
     }
 
     public String getAddProperty2() {
-        if(addProperty2.contains(";")) {
+        if(addProperty2.contains("/")) {
+            return getMilkTemp(addProperty2);
+        } else if (addProperty2.contains(";")) {
             return getRandom(addProperty2);
         }
         return addProperty2;
@@ -98,5 +103,15 @@ public class Task {
 
     public void setAddProperty3(String addProperty3) {
         this.addProperty3 = addProperty3;
+    }
+
+    private String getMilkTemp(String text) {
+        List<String> presets = new ArrayList<>();
+        String[] values = text.split("/");
+        Arrays.stream(values).forEach(v -> {
+            presets.add(getRandom(v));
+        });
+        System.out.println(String.join("/", presets));
+        return String.join("/", presets);
     }
 }
