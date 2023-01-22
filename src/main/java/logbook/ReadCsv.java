@@ -32,4 +32,15 @@ public class ReadCsv {
         MappingIterator<Worker> taskMappingIterator = new CsvMapper().readerWithTypedSchemaFor(Worker.class).with(schema).readValues(file);
         return taskMappingIterator.readAll();
     }
+
+    public List<Product> readProducts(String piesSheet) throws IOException, URISyntaxException {
+        File file = new File(ClassLoader.getSystemResource(piesSheet).toURI());
+        CsvMapper csvMapper = new CsvMapper();
+        CsvSchema schema = csvMapper
+                .typedSchemaFor(Product.class)
+                .withHeader()
+                .withColumnReordering(true);
+        MappingIterator<Product> taskMappingIterator = new CsvMapper().readerWithTypedSchemaFor(Product.class).with(schema).readValues(file);
+        return taskMappingIterator.readAll();
+    }
 }

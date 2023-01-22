@@ -3,25 +3,29 @@
  */
 package logbook;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonSerializable;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Strings;
 import okhttp3.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URISyntaxException;
+import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Runner {
 
@@ -58,7 +62,13 @@ public class Runner {
     }
 
      public boolean submitTask(String payload, boolean submit) throws IOException {
-        OkHttpClient client = Client.getUnsafeOkHttpClient();
+         HostnameVerifier hostnameVerifier =  new HostnameVerifier() {
+             @Override
+             public boolean verify(String hostname, SSLSession session) {
+                 return true;
+             }
+         };
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new LoggingInterceptor()).hostnameVerifier(hostnameVerifier).build();
         MediaType mediaType = MediaType.parse("application/json");
         RequestBody body = RequestBody.create(mediaType, payload);
         Request request = new Request.Builder()
@@ -69,6 +79,31 @@ public class Runner {
             .build();
         if(submit) {
             Response response = client.newCall(request).execute();
+            System.out.println(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(response));
+            return response.isSuccessful();
+        }
+        return false;
+    }
+
+    public boolean submit(String payload, boolean submit, String url) throws IOException {
+        HostnameVerifier hostnameVerifier =  new HostnameVerifier() {
+            @Override
+            public boolean verify(String hostname, SSLSession session) {
+                return true;
+            }
+        };
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new LoggingInterceptor()).hostnameVerifier(hostnameVerifier).build();
+        MediaType mediaType = MediaType.parse("application/json");
+        RequestBody body = RequestBody.create(mediaType, payload);
+        Request request = new Request.Builder()
+                .url(url)
+                .method("POST", body)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Cookie", webDriver.manage().getCookies().toString())
+                .build();
+        if(submit) {
+            Response response = client.newCall(request).execute();
+            System.out.println(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(response));
             return response.isSuccessful();
         }
         return false;
@@ -123,6 +158,61 @@ public class Runner {
                 e.printStackTrace();
             }
         });
+    }
+
+    public String getRandom() {
+
+        String[] ranges = new String[]{"70", "75"};
+        Random r = new Random();
+        double random = (r.nextInt(21)-10) / 10.0;
+        int number = r.nextInt(Integer.parseInt(ranges[1]) - Integer.parseInt(ranges[0])) + Integer.parseInt(ranges[0]);
+        System.out.println(ranges[0] + " " + ranges[1] + " " + (random+number) );
+        return String.valueOf(random + (double) number);
+    }
+
+    public void productEntry(boolean today, String customDate) throws Exception {
+        try {
+            setup();
+            String[] hrs = new String[]{"07", "11", "15", "20"};
+            int max = 59;
+            int min = 10;
+            for (String hr : hrs) {
+                String customTime = hr.concat(":" + ThreadLocalRandom.current().nextInt(min, max + 1));
+                System.out.println(customTime);
+                piesEntries(false, "2023-01-21", customTime, 0, getRandom(), 0, "pies");
+                piesEntries(false, "2023-01-21", customTime, 1, null, null, "donuts");
+                piesEntries(false, "2023-01-21", customTime, 2, null, null, "sandwich");
+            }
+            webDriver.quit();
+        } catch (Exception e) {
+            webDriver.quit();
+            throw e;
+        }
+
+    }
+
+    public void piesEntries(boolean today, String customDate, String customTime, int productType, String temperature, Integer reasonType, String sheet) throws Exception {
+        ReadCsv readCsv = new ReadCsv();
+        Pies pies = new Pies();
+        pies.setProductType(productType);
+        pies.setTemperature(temperature);
+        pies.setReasonType(reasonType);
+        List<Product> productList = readCsv.readProducts(sheet+".csv");
+        pies.setProducts(productList);
+        pies.setEnteredTime(customTime);
+        if(today) {
+            LocalDate dateObj = LocalDate.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            String date = dateObj.format(formatter);
+            pies.setEnteredDate(date);
+        }else {
+            if (customDate != null) {
+                pies.setEnteredDate(customDate);
+            }
+        }
+        ObjectMapper objectMapper = new ObjectMapper();
+        System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(pies));
+        submit(objectMapper.writeValueAsString(pies), true, "http://logbook.pieface.com.au/api/product/record?timeZone=Australia/Melbourne");
     }
 
     public void logBookEntries(boolean fullDay, String customDate) throws Exception {

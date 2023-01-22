@@ -12,7 +12,16 @@ public class App {
 //        runner.logBookEntries(false, null);
 
         System.out.println("---*********-----FILLING FULL DAY ENTRY CUSTOM DATE---*****------");
-        runner.logBookEntries(true, "2021-11-12");
+
+        runner.logBookEntries(true, "2022-01-22");
+
+        /*
+        Enters 4 hrs for all pies, donut and sandwich for a give date.
+        Time enters "07", "11", "15", "20". Random minutes
+        Pass either today or custom date
+        Temperatures are auto generated
+         */
+        runner.productEntry(false, "2021-11-12");
 
 //        System.out.println("---*********-----FILLING TIMED ENTRY CUSTOM DATE---*****------");
 //        runner.onDemandTaskLogEntries("onepm", "2021-11-16");

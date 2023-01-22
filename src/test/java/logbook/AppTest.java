@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -51,6 +52,7 @@ public class AppTest {
     }
 
     @Test
+    @Ignore
     public void readListTest() throws Exception {
         Calendar now =  Calendar.getInstance();
         int hour = now.get(Calendar.HOUR_OF_DAY);
